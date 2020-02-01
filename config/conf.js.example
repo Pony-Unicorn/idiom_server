@@ -1,0 +1,17 @@
+module.exports = {
+    isHTTPS: false,
+    MySQL: {
+        user: "root",
+        password: "",
+        host: "127.0.0.1",
+        port: 3306,
+        database: "",
+        charset: "utf8mb4_general_ci"
+    },
+    MongoDB: {
+
+    },
+    listenPort: 3000,
+    jwt_secret: '',
+    password_salt: ''
+}
