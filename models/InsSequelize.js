@@ -14,9 +14,10 @@ const InsSequelize = new Sequelize(dbConf.database, dbConf.user, dbConf.password
         idle: 10000
     },
     define: {
-        timestamps: false
+        underscored: true
     },
-    logging: false
+    timezone: '+08:00',
+    logging: dbConf.sequelizeLogging
 });
 
 module.exports = InsSequelize;

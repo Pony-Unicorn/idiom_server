@@ -5,25 +5,41 @@ const InsSequelize = require('./InsSequelize');
 
 class Users extends Model {
 
-    /**
-     * @param {string} account 
-     */
-    getPasswordByAccount(account) {
-        return Users.findOne({ where: { account } });
-    }
 };
 
 Users.init(
     {
-        account: { // 账户
-            type: Sequelize.STRING(10)
+        status: {
+            type: Sequelize.INTEGER(1),
+            COMMENT: '状态'
         },
-        password: { // 密码
-            type: Sequelize.STRING(100)
+        openId: {
+            type: Sequelize.STRING(64),
         },
-        created_at: { // 创建时间
-            type: Sequelize.STRING(20)
-        }
+        curLevel: {
+            type: Sequelize.INTEGER(11),
+            COMMENT: '用户等级'
+        },
+        curPoint: {
+            type: Sequelize.INTEGER(11),
+            COMMENT: '现在关卡'
+        },
+        isPass: {
+            type: Sequelize.INTEGER(1),
+            COMMENT: '是否通关'
+        },
+        strength: {
+            type: Sequelize.INTEGER(11),
+            COMMENT: '剩余体力值'
+        },
+        maxStrength: {
+            type: Sequelize.INTEGER(11),
+            COMMENT: '体力值上限'
+        },
+        lastTimeStrength: {
+            type: Sequelize.DATE,
+            COMMENT: '上一次刷新体力值时间'
+        },
     },
     {
         sequelize: InsSequelize,

@@ -1,17 +1,14 @@
 const http = require('http');
 
 const express = require('express');
-
 const jwt = require('jsonwebtoken');
 const expressJwt = require('express-jwt');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-
 const cors = require("cors");
 const compression = require("compression");
 
 const config = require('./config');
-
 const router = require('./routes');
 
 class App {
