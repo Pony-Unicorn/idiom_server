@@ -1,5 +1,5 @@
 {
-  "name": "nodejs_template",
+  "name": "idiom_server",
   "version": "0.0.1",
   "private": false,
   "scripts": {
