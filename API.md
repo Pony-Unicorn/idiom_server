@@ -1,17 +1,17 @@
 ## 接口文档
 
-### 测试网地址：192.168.1.202:3000
-### 正式网地址：
+## 测试网地址：
+## 正式网地址：
 
-### 登录：
-  * post请求，json 格式
-  * 路由 /login
+### 登录(初始化信息)：
+  * 路由 game_init
   * 参数
 
 ```
 {
-    "account": string, // 账户名称
-    "password": string // 用户密码
+    uid: string, // 没有 uid 默认为新用户
+    share_uid: string, // 分享人 uid
+    js_code: string // 没有 uid 的时候通过 wx.login 获取 code
 }
 ```
 
@@ -19,6 +19,13 @@
 
 ```
 {
-    code: int// 0 提交成功，-1，登录失败
+    status: number, // 暂时无用
+    uid: string, // 用户游戏 ID
+    currentLevel: number, // 当前用户等级（身份）
+    currentPoint: number, // 当前关卡数
+    pointState: boolean, // 当前关卡是否已通过
+    strength: number, // 当前剩余体力值
+    maxStrength: number, // 体力值上限
+    coolingTime: number // 下一次体力冷却剩余时间
 }
 ```

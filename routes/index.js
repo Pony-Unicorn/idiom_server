@@ -1,9 +1,9 @@
 const express = require('express');
-
-const testController = require('./testController');
-
 const router = express.Router();
 
-router.get('/test', testController.test);
+const gameController = require('./gameController');
+
+router.get('/game_init', gameController.init);
+router.get('/point_pass', gameController.pointPass);
 
 module.exports = router;
