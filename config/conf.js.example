@@ -6,7 +6,8 @@ module.exports = {
         host: "127.0.0.1",
         port: 3306,
         database: "",
-        charset: "utf8mb4_general_ci"
+        charset: "utf8mb4_general_ci",
+        sequelizeLogging: true // sequelize Logging 生产环境一定要为 false 
     },
     MongoDB: {
 

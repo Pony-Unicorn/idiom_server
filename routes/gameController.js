@@ -9,6 +9,8 @@ const init = async (req, res) => {
     const shareUid = req.query.share_uid;
     const jsCode = req.query.js_code;
 
+    const resBody = { code: 0 }; // 响应数据
+
     if (typeof id === 'undefined') {
 
         if (typeof jsCode === 'undefined') {
@@ -112,6 +114,8 @@ const init = async (req, res) => {
             sendJSONresponse(res, 200, { code: -4, msg: '无效的 uid' });
         }
     }
+
+    // sendJSONresponse(res, 200, resBody);
 }
 
 const pointPass = async (req, res) => {
