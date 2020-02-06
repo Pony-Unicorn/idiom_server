@@ -1,14 +1,12 @@
 /**
- * 测试状态
- * @type {{untidy: number, pending: number, fail: number, success: number}}
+ * 微信授权认证
  */
-const testStatus = {
-    untidy: 0,//
-    pending: 1,//等待状态
-    fail: 2,//失败状态
-    success: 3//成功状态
+const wxAuth = {
+    wx2sessionUrl: 'https://api.weixin.qq.com/sns/jscode2session',
+    appid: 'wx4561106f648fd72e',
+    secret: 'c90ee05621cfadc16f940e2c016a1ce5'
 }
 
 module.exports = {
-    testStatus
+    wxAuth
 }

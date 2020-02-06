@@ -42,9 +42,8 @@ class App {
         //     if (err.name === 'UnauthorizedError') {
         //         res.send({
         //             code: 101,
-        //             tips: '请登录'
+        //             msg: '请登录'
         //         });
-        //         return;
         //     }
         // });
     }

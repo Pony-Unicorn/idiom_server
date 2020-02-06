@@ -2,6 +2,7 @@ const axios = require('axios');
 
 const usersModel = require('../models/users');
 const { sendJSONresponse } = require('../utils/Utils');
+const constant = require('../constant');
 
 const init = async (req, res) => {
 
@@ -19,12 +20,12 @@ const init = async (req, res) => {
 
         } else {
 
-            const wx2sessionUrl = 'https://api.weixin.qq.com/sns/jscode2session';
+            const wx2sessionUrl = constant.wxAuth.wx2sessionUrl;
 
             axios.get(wx2sessionUrl, {
                 params: {
-                    appid: 'wx4561106f648fd72e',
-                    secret: 'c90ee05621cfadc16f940e2c016a1ce5',
+                    appid: constant.wxAuth.appid,
+                    secret: constant.wxAuth.secret,
                     js_code: jsCode,
                     grant_type: 'authorization_code'
                 }
