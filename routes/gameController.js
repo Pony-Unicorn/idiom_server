@@ -10,113 +10,79 @@ const init = async (req, res) => {
     const shareUid = req.query.share_uid;
     const jsCode = req.query.js_code;
 
-    const resBody = { code: 0 }; // 响应数据
+    const resBody = { code: 0, data: {} }; // 响应数据
+
+    let userRow;
 
     if (typeof id === 'undefined') {
 
         if (typeof jsCode === 'undefined') {
-
-            sendJSONresponse(res, 200, { code: -1, msg: 'jsCode未提供' });
-
+            resBody.code = -1;
         } else {
-
             const wx2sessionUrl = constant.wxAuth.wx2sessionUrl;
 
-            axios.get(wx2sessionUrl, {
-                params: {
-                    appid: constant.wxAuth.appid,
-                    secret: constant.wxAuth.secret,
-                    js_code: jsCode,
-                    grant_type: 'authorization_code'
-                }
-            }).then(response => response.data).then(async data => {
+            try {
+                const wxAuthRawData = await axios.get(wx2sessionUrl, {
+                    params: {
+                        appid: constant.wxAuth.appid,
+                        secret: constant.wxAuth.secret,
+                        js_code: jsCode,
+                        grant_type: 'authorization_code'
+                    }
+                });
 
-                data.errcode = data.errcode || 0;
+                const wxAuthData = wxAuthRawData.data;
 
-                if (data.errcode === 0) {
+                wxAuthData.errcode = wxAuthData.errcode || 0;
 
-                    const openId = data.openid;
+                if (wxAuthData.errcode === 0) {
 
-                    let userRow = await usersModel.findByOpenIdP(openId);
+                    const openId = wxAuthData.openid;
 
+                    userRow = await usersModel.findByOpenIdP(openId);
+
+                    // 后期优化 SQL 语句
                     if (userRow) {
 
                         await usersModel.updateByOpenIdP(openId, {
-                            sessionKey: data.session_key
+                            sessionKey: wxAuthData.session_key
                         });
 
                         userRow = await usersModel.findByOpenIdP(openId);
-
-                        sendJSONresponse(res, 200, {
-                            code: 0,
-                            data: {
-                                status: userRow.status,
-                                uid: userRow.id,
-                                currentLevel: userRow.curLevel,
-                                currentPoint: userRow.curPoint,
-                                pointState: userRow.isPass === 0 ? false : true,
-                                strength: userRow.strength,
-                                maxStrength: userRow.maxStrength,
-                                coolingTime: 100
-                            }
+                    } else {
+                        userRow = await usersModel.addRecordP({
+                            openId,
+                            sessionKey: wxAuthData.session_key
                         });
-
-                        return;
                     }
-
-                    const newUser = {
-                        openId: openId,
-                        sessionKey: data.session_key
-                    }
-
-                    usersModel.addRecordP(newUser).then(userRow => {
-                        sendJSONresponse(res, 200, {
-                            code: 0,
-                            data: {
-                                status: userRow.status,
-                                uid: userRow.id,
-                                currentLevel: userRow.curLevel,
-                                currentPoint: userRow.curPoint,
-                                pointState: userRow.isPass === 0 ? false : true,
-                                strength: userRow.strength,
-                                maxStrength: userRow.maxStrength,
-                                coolingTime: 100
-                            }
-                        });
-                    });
                 } else {
-                    sendJSONresponse(res, 200, { code: -2, msg: `wx2session 错误代码${data.errcode}` });
+                    resBody.code = -2;
                 }
-            }).catch(err => {
-                console.log(err);
-                sendJSONresponse(res, 200, { code: -3, msg: '请求微信 wx2session 错误' });
-            });
 
+            } catch (err) {
+                userRow = null;
+                resBody.code = -3;
+            }
         }
     } else {
-
-        const userRow = await usersModel.findByIdP(id);
-
-        if (userRow) {
-            sendJSONresponse(res, 200, {
-                code: 0,
-                data: {
-                    status: userRow.status,
-                    uid: userRow.id,
-                    currentLevel: userRow.curLevel,
-                    currentPoint: userRow.curPoint,
-                    pointState: userRow.isPass === 0 ? false : true,
-                    strength: userRow.strength,
-                    maxStrength: userRow.maxStrength,
-                    coolingTime: 100
-                }
-            });
-        } else {
-            sendJSONresponse(res, 200, { code: -4, msg: '无效的 uid' });
-        }
+        userRow = await usersModel.findByIdP(id);
     }
 
-    // sendJSONresponse(res, 200, resBody);
+    if (userRow) {
+        resBody.code = 0;
+        resBody.data = {
+            status: userRow.status,
+            uid: userRow.id,
+            currentLevel: userRow.curLevel,
+            currentPoint: userRow.curPoint,
+            pointState: userRow.isPass === 0 ? false : true,
+            strength: userRow.strength,
+            maxStrength: userRow.maxStrength,
+            coolingTime: 100
+        };
+    }
+
+    sendJSONresponse(res, 200, resBody);
 }
 
 const pointPass = async (req, res) => {
