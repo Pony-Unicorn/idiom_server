@@ -1,8 +1,9 @@
 const { query: checkQuery, validationResult } = require('express-validator');
 const dayjs = require('dayjs');
 
-const { sendJSONresponse } = require('../utils/Utils');
 const usersModel = require('../models/users');
+
+const { sendJSONresponse } = require('../utils/Utils');
 const appErrorCode = require('../constant/appErrorCode');
 
 const pointPass = async (req, res) => {
@@ -23,7 +24,7 @@ const pointPass = async (req, res) => {
     let userRow = await usersModel.findByIdP(id);
 
     if (userRow) {
-        if (type == 0) {
+        if (type === '0') {
 
             let strength = userRow.strength - 1;
 
