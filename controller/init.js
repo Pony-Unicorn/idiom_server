@@ -82,6 +82,8 @@ const init = async (req, res) => {
             maxStrength: userRow.maxStrength,
             coolingTime: 100
         };
+    } else {
+        resBody.code = appErrorCode.userUniqueIdentity;
     }
 
     sendJSONresponse(res, 200, resBody);

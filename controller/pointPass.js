@@ -81,7 +81,7 @@ const pointPass = async (req, res) => {
             });
         }
     } else {
-        sendJSONresponse(res, 200, { code: -4 });
+        sendJSONresponse(res, 200, { code: appErrorCode.userUniqueIdentity });
     }
 }
 
