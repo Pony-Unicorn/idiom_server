@@ -21,13 +21,13 @@ const init = async (req, res) => {
         if (typeof jsCode === 'undefined') {
             resBody.code = -1;
         } else {
-            const wx2sessionUrl = wxAuthConf.wxAuth.wx2sessionUrl;
+            const wx2sessionUrl = wxAuthConf.wx2sessionUrl;
 
             try {
                 const wxAuthRawData = await axios.get(wx2sessionUrl, {
                     params: {
-                        appid: wxAuthConf.wxAuth.appid,
-                        secret: wxAuthConf.wxAuth.secret,
+                        appid: wxAuthConf.appid,
+                        secret: wxAuthConf.secret,
                         js_code: jsCode,
                         grant_type: 'authorization_code'
                     }
