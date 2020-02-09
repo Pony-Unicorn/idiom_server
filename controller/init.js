@@ -1,8 +1,10 @@
 const axios = require('axios');
+const dayjs = require('dayjs');
 
-const usersModel = require('../models/users');
 const { sendJSONresponse } = require('../utils/Utils');
-const constant = require('../constant');
+const usersModel = require('../models/users');
+const wxAuthConf = require('../constant/wxAuth');
+const appErrorCode = require('../constant/appErrorCode');
 
 const init = async (req, res) => {
 
@@ -19,13 +21,13 @@ const init = async (req, res) => {
         if (typeof jsCode === 'undefined') {
             resBody.code = -1;
         } else {
-            const wx2sessionUrl = constant.wxAuth.wx2sessionUrl;
+            const wx2sessionUrl = wxAuthConf.wxAuth.wx2sessionUrl;
 
             try {
                 const wxAuthRawData = await axios.get(wx2sessionUrl, {
                     params: {
-                        appid: constant.wxAuth.appid,
-                        secret: constant.wxAuth.secret,
+                        appid: wxAuthConf.wxAuth.appid,
+                        secret: wxAuthConf.wxAuth.secret,
                         js_code: jsCode,
                         grant_type: 'authorization_code'
                     }
@@ -85,52 +87,4 @@ const init = async (req, res) => {
     sendJSONresponse(res, 200, resBody);
 }
 
-const pointPass = async (req, res) => {
-
-    const id = req.query.uid;
-    const type = req.query.type; // 0 或 1，0 为开始，1为结束
-
-    let userRow = await usersModel.findByIdP(id);
-
-    if (userRow) {
-        if (type == 0) {
-            sendJSONresponse(res, 200, {
-                code: 0,
-                data: {
-                    status: userRow.status,
-                    uid: userRow.id,
-                    currentLevel: userRow.curLevel,
-                    currentPoint: userRow.curPoint,
-                    pointState: userRow.isPass === 0 ? false : true,
-                    strength: userRow.strength,
-                    maxStrength: userRow.maxStrength,
-                    coolingTime: 100
-                }
-            });
-        } else {
-            await usersModel.updatePointByIdP(id);
-            userRow = await usersModel.findByIdP(id);
-
-            sendJSONresponse(res, 200, {
-                code: 0,
-                data: {
-                    status: userRow.status,
-                    uid: userRow.id,
-                    currentLevel: userRow.curLevel,
-                    currentPoint: userRow.curPoint,
-                    pointState: userRow.isPass === 0 ? false : true,
-                    strength: userRow.strength,
-                    maxStrength: userRow.maxStrength,
-                    coolingTime: 100
-                }
-            });
-        }
-    } else {
-        sendJSONresponse(res, 200, { code: -4, msg: '无效的 uid' });
-    }
-}
-
-module.exports = {
-    init,
-    pointPass
-}
+module.exports = init;

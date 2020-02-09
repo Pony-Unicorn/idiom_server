@@ -7,6 +7,4 @@ const wxAuth = {
     secret: 'c90ee05621cfadc16f940e2c016a1ce5'
 }
 
-module.exports = {
-    wxAuth
-}
+module.exports = wxAuth;

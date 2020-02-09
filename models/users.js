@@ -49,6 +49,17 @@ class Users extends Model {
             }
         );
     }
+
+    updateByIdP(id, updateObj) {
+        return Users.update(
+            updateObj,
+            {
+                where: {
+                    id
+                }
+            }
+        );
+    }
 };
 
 Users.init(
