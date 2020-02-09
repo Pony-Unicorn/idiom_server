@@ -26,56 +26,62 @@ const pointPass = async (req, res) => {
     if (userRow) {
         if (type === '0') {
 
-            let strength = userRow.strength - 1;
+            const strength = userRow.strength;
+            let newStrength = strength;
 
-            if (strength < 0) {
-                strength = 0;
-                sendJSONresponse(res, 200, { code: -1 });
+            const curPoint = userRow.curPoint;
+            let newCurPoint = curPoint;
+
+            const isPass = userRow.isPass;
+            let newIsPass = isPass;
+
+            if (strength < 1) {
+                sendJSONresponse(res, 200, { code: appErrorCode.strengthLack });
                 return;
             }
 
-            await usersModel.updateByIdP(id, {
-                strength,
-                lastTimeStrength: new Date()
-            });
+            if (isPass === 1) {
 
-            const date1 = dayjs(userRow.lastTimeStrength);
-            const date2 = dayjs();
-            const dateDiff = date2.diff(date1);
+                newStrength = strength - 1;
+                newCurPoint = curPoint + 1;
+                newIsPass = 0;
+
+                await usersModel.updateByIdP(id, {
+                    strength: newStrength, // 后期考虑使用原子更新
+                    curPoint: newCurPoint,
+                    isPass: newIsPass
+                });
+            }
 
             sendJSONresponse(res, 200, {
                 code: 0,
                 data: {
-                    status: userRow.status,
-                    uid: userRow.id,
                     currentLevel: userRow.curLevel,
-                    currentPoint: userRow.curPoint,
-                    pointState: userRow.isPass === 0 ? false : true,
-                    strength,
+                    currentPoint: newCurPoint,
+                    pointState: newIsPass === 0 ? false : true,
+                    strength: newStrength,
                     maxStrength: userRow.maxStrength,
-                    coolingTime: dateDiff
+                    coolingTime: 0
                 }
             });
         } else {
-            await usersModel.updatePointByIdP(id);
-            userRow = await usersModel.findByIdP(id);
+
+            await usersModel.updateByIdP(id, { isPass: 1 }); // 更新关卡已完成，后续加入防作弊验证
 
             sendJSONresponse(res, 200, {
                 code: 0,
                 data: {
-                    status: userRow.status,
-                    uid: userRow.id,
                     currentLevel: userRow.curLevel,
                     currentPoint: userRow.curPoint,
-                    pointState: userRow.isPass === 0 ? false : true,
+                    pointState: true,
                     strength: userRow.strength,
                     maxStrength: userRow.maxStrength,
-                    coolingTime: 100
+                    coolingTime: 0
                 }
             });
         }
     } else {
-        sendJSONresponse(res, 200, { code: -4, msg: '无效的 uid' });
+        sendJSONresponse(res, 200, { code: -4 });
     }
 }
 
