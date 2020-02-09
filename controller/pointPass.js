@@ -35,7 +35,7 @@ const pointPass = async (req, res) => {
             const isPass = userRow.isPass;
             let newIsPass = isPass;
 
-            if (strength < 1) {
+            if (isPass === 1 && strength < 1) {
                 sendJSONresponse(res, 200, { code: appErrorCode.strengthLack });
                 return;
             }
