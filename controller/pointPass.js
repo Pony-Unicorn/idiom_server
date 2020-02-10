@@ -6,6 +6,7 @@ const usersModel = require('../models/users');
 const { sendJSONresponse } = require('../utils/Utils');
 const appErrorCode = require('../constant/appErrorCode');
 
+/** 开始关卡和结束关卡*/
 const pointPass = async (req, res) => {
 
     await checkQuery('uid', 'uid 参数不合法').isString().isLength({ min: 5, max: 10 }).run(req);
