@@ -22,7 +22,6 @@
 
 ```
 {
-    status: number, // 暂时无用
     uid: string, // 用户游戏 ID
     currentLevel: number, // 当前用户等级（身份）
     currentPoint: number, // 当前关卡数
@@ -53,6 +52,25 @@
     pointState: boolean, // 当前关卡是否已通过
     strength: number, // 当前剩余体力值
     maxStrength: number, // 体力值上限
+    coolingTime: number // 下一次体力冷却剩余时间, 精确到秒
+}
+```
+
+#### 恢复体力（冷却）：
+  * 路由 physical_recovery
+  * 参数
+
+```
+{
+    uid: string
+}
+```
+
+  * 返回值：
+
+```
+{
+    strength: number, // 当前剩余体力值
     coolingTime: number // 下一次体力冷却剩余时间, 精确到秒
 }
 ```

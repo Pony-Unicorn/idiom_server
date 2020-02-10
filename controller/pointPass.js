@@ -59,7 +59,7 @@ const pointPass = async (req, res) => {
                 data: {
                     currentLevel: userRow.curLevel,
                     currentPoint: newCurPoint,
-                    pointState: newIsPass === 0 ? false : true,
+                    pointState: newIsPass,
                     strength: newStrength,
                     maxStrength: userRow.maxStrength,
                     coolingTime: 0

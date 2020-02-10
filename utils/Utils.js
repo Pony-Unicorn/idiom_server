@@ -10,6 +10,20 @@ const config = require('../config');
 const sleep = duration => new Promise(resole => setTimeout(resole, duration));
 
 /**
+ * 分割出整数部分和小数部分
+ * @param {number} floating 
+ */
+const severIntegersAndDecimals = floating => {
+    const result = [0, 0];
+    const sever = floating.toString().split('.');
+
+    result[0] = Number(sever[0]);
+    result[1] = Number('0.' + sever[1]) || result[1];
+
+    return result;
+}
+
+/**
  * @param {*} res 
  * @param {*} status 
  * @param {*} content 
@@ -142,5 +156,6 @@ module.exports = {
     readDirPromise,
     deleteDirPromise,
     deleteFilePromise,
-    getStatPromise
+    getStatPromise,
+    severIntegersAndDecimals
 }

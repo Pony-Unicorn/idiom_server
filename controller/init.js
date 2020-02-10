@@ -1,8 +1,10 @@
 const axios = require('axios');
 const dayjs = require('dayjs');
 
-const { sendJSONresponse } = require('../utils/Utils');
+const { sendJSONresponse, severIntegersAndDecimals } = require('../utils/Utils');
 const usersModel = require('../models/users');
+
+const gameConf = require('../gameConf/');
 const wxAuthConf = require('../constant/wxAuth');
 const appErrorCode = require('../constant/appErrorCode');
 
@@ -74,17 +76,51 @@ const init = async (req, res) => {
         return;
     }
 
+    const bases = gameConf.get('bases');
+    const maxStrength = bases.maxStrength;
+
+    let newStrength = maxStrength;
+    let coolingTime = 0; // 单位 秒
+
+    if (userRow.strength < maxStrength) {
+
+        let lastTimeStrength = new Date();
+
+        const lastTime = dayjs(userRow.lastTimeStrength);
+        const curTime = dayjs(lastTimeStrength);
+        const diffTime = curTime.diff(lastTime, 'second');
+
+        /**@type number */
+        const recoveryStrengthTime = bases.recoveryStrengthTime;
+
+        const recoverable = Math.floor(diffTime / recoveryStrengthTime * 100) / 100; // 可以恢复的体力值，保留两位小数
+        const actualStrength = maxStrength - userRow.strength; // 实际应该恢复的体力值
+
+        const diffStrength = recoverable - actualStrength;
+
+        if (diffStrength < 0) {
+            const [integers, decimals] = severIntegersAndDecimals(recoverable);
+            newStrength = userRow.strength + integers;
+            coolingTime = Math.ceil((1 - decimals) * recoveryStrengthTime);
+            lastTimeStrength = dayjs().subtract(decimals * recoveryStrengthTime, 's').toDate();
+        }
+
+        await usersModel.updateByIdP(id, {
+            strength: newStrength,
+            lastTimeStrength
+        });
+    }
+
     sendJSONresponse(res, 200, {
         code: 0,
         data: {
-            status: userRow.status,
             uid: userRow.id,
             currentLevel: userRow.curLevel,
             currentPoint: userRow.curPoint,
-            pointState: userRow.isPass === 0 ? false : true,
-            strength: userRow.strength,
-            maxStrength: userRow.maxStrength,
-            coolingTime: 0
+            pointState: userRow.isPass,
+            strength: newStrength,
+            maxStrength,
+            coolingTime
         }
     });
 }
