@@ -1,7 +1,7 @@
 const { query: checkQuery, validationResult } = require('express-validator');
-const dayjs = require('dayjs');
 
 const usersModel = require('../models/users');
+const coolingTimeStrength = require('../services/coolingTimeStrength');
 
 const { sendJSONresponse } = require('../utils/Utils');
 const appErrorCode = require('../constant/appErrorCode');
@@ -36,6 +36,9 @@ const pointPass = async (req, res) => {
             const isPass = userRow.isPass;
             let newIsPass = isPass;
 
+            const lastTimeStrength = userRow.lastTimeStrength;
+            let newLastTimeStrength = lastTimeStrength;
+
             if (isPass === 1 && strength < 1) {
                 sendJSONresponse(res, 200, { code: appErrorCode.strengthLack });
                 return;
@@ -46,13 +49,17 @@ const pointPass = async (req, res) => {
                 newStrength = strength - 1;
                 newCurPoint = curPoint + 1;
                 newIsPass = 0;
+                newLastTimeStrength = new Date();
 
                 await usersModel.updateByIdP(id, {
-                    strength: newStrength, // 后期考虑使用原子更新
+                    strength: newStrength, // 后期考虑使用原子更新 // 后期优化一条 SQL 语句
                     curPoint: newCurPoint,
-                    isPass: newIsPass
+                    isPass: newIsPass,
+                    lastTimeStrength: newLastTimeStrength
                 });
             }
+
+            const { strength: backStrength, maxStrength, coolingTime } = await coolingTimeStrength(id, newStrength, newLastTimeStrength);
 
             sendJSONresponse(res, 200, {
                 code: 0,
@@ -60,14 +67,16 @@ const pointPass = async (req, res) => {
                     currentLevel: userRow.curLevel,
                     currentPoint: newCurPoint,
                     pointState: newIsPass,
-                    strength: newStrength,
-                    maxStrength: userRow.maxStrength,
-                    coolingTime: 0
+                    strength: backStrength,
+                    maxStrength,
+                    coolingTime
                 }
             });
         } else {
 
             await usersModel.updateByIdP(id, { isPass: 1 }); // 更新关卡已完成，后续加入防作弊验证
+
+            const { strength, maxStrength, coolingTime } = await coolingTimeStrength(id, userRow.strength, userRow.lastTimeStrength);
 
             sendJSONresponse(res, 200, {
                 code: 0,
@@ -75,9 +84,9 @@ const pointPass = async (req, res) => {
                     currentLevel: userRow.curLevel,
                     currentPoint: userRow.curPoint,
                     pointState: true,
-                    strength: userRow.strength,
-                    maxStrength: userRow.maxStrength,
-                    coolingTime: 0
+                    strength,
+                    maxStrength,
+                    coolingTime
                 }
             });
         }
