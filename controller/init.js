@@ -2,6 +2,8 @@ const axios = require('axios');
 
 const { sendJSONresponse } = require('../utils/Utils');
 const usersModel = require('../models/users');
+const sharesModel = require('../models/shares');
+
 const coolingTimeStrength = require('../services/coolingTimeStrength');
 
 const wxAuthConf = require('../constant/wxAuth');
@@ -60,6 +62,13 @@ const init = async (req, res) => {
                     openId,
                     sessionKey: wxAuthData.session_key
                 });
+
+                if (typeof shareUid !== 'undefined') {
+                    sharesModel.addRecordP({
+                        inviter: shareUid,
+                        beInvited: userRow.id
+                    });
+                }
             }
 
         } catch (err) {

@@ -16,7 +16,7 @@ const coolingTimeStrength = async (id, oldStrength, oldLastTimeStrength) => {
     const bases = gameConf.get('bases');
     const maxStrength = bases.maxStrength;
 
-    let strength = Math.max(maxStrength, oldStrength);
+    let strength = oldStrength;
     let coolingTime = 0; // 单位 秒
 
     if (oldStrength < maxStrength) {
@@ -39,7 +39,9 @@ const coolingTimeStrength = async (id, oldStrength, oldLastTimeStrength) => {
             const [integers, decimals] = severIntegersAndDecimals(recoverable);
             strength = oldStrength + integers;
             coolingTime = Math.ceil((1 - decimals) * recoveryStrengthTime);
-            lastTimeStrength = dayjs().subtract(decimals * recoveryStrengthTime, 's').toDate();
+            lastTimeStrength = dayjs(oldLastTimeStrength).add(integers * recoveryStrengthTime, 's');
+        } else {
+            strength = maxStrength;
         }
 
         await usersModel.updateByIdP(id, {
