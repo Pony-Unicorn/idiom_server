@@ -15,6 +15,7 @@ const init = async (req, res) => {
     const id = req.query.uid;
     const shareUid = req.query.share_uid;
     const jsCode = req.query.js_code;
+    const channelId = req.query.channel_id || 0;
 
     let userRow = null;
 
@@ -60,7 +61,8 @@ const init = async (req, res) => {
             } else {
                 userRow = await usersModel.addRecordP({
                     openId,
-                    sessionKey: wxAuthData.session_key
+                    sessionKey: wxAuthData.session_key,
+                    channelId
                 });
 
                 if (typeof shareUid !== 'undefined') {

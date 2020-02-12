@@ -40,6 +40,7 @@ CREATE TABLE `users` (
   `status` int(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态',
   `open_id` varchar(64) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `session_key` varchar(64) COLLATE utf8mb4_general_ci NOT NULL COMMENT '加密key',
+  `channel_id` int(11) NOT NULL DEFAULT '0' COMMENT '渠道id',
   `cur_level` int(11) unsigned NOT NULL DEFAULT '1' COMMENT '用户等级',
   `cur_point` int(11) unsigned NOT NULL DEFAULT '1' COMMENT '现在关卡',
   `is_pass` int(1) NOT NULL DEFAULT '0' COMMENT '是否通关',

@@ -76,6 +76,11 @@ Users.init(
         sessionKey: {
             type: Sequelize.STRING(64),
         },
+        channelId: {
+            type: Sequelize.INTEGER(11),
+            defaultValue: 0,
+            COMMENT: '渠道ID'
+        },
         curLevel: {
             type: Sequelize.INTEGER(11),
             defaultValue: 1,
