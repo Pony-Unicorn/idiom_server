@@ -95,6 +95,7 @@ const init = async (req, res) => {
             currentLevel: userRow.curLevel,
             currentPoint: userRow.curPoint,
             pointState: userRow.isPass,
+            channelId: userRow.channelId,
             strength,
             maxStrength,
             coolingTime
