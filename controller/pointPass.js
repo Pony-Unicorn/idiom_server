@@ -20,7 +20,7 @@ const pointPass = async (req, res) => {
     }
 
     const id = req.query.uid;
-    const type = req.query.type; // 0 或 1，0 为开始，1为结束
+    const type = req.query.type; // 0 或 1。0 为开始，1为结束
 
     let userRow = await usersModel.findByIdP(id);
 

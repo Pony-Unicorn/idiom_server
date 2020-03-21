@@ -38,12 +38,14 @@ const init = async (req, res) => {
                 }
             });
 
+            console.log('wxAuthRawData>>>', wxAuthRawData);
+
             const wxAuthData = wxAuthRawData.data;
 
             wxAuthData.errcode = wxAuthData.errcode || 0;
 
             if (wxAuthData.errcode !== 0) {
-                sendJSONresponse(res, 200, { code: -1 });
+                sendJSONresponse(res, 200, { code: -1, wxcode: wxAuthData.errcode });
                 return;
             }
 
