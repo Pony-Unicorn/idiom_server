@@ -13,7 +13,6 @@
 ```
 {
     uid: string, // 没有 uid 默认为新用户
-    share_uid: string, // 分享人 uid
     js_code: string // 没有 uid 的时候通过 wx.login 获取 code
 }
 ```

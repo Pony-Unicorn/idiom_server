@@ -26,27 +26,33 @@ const init = async (req, res) => {
             return;
         }
 
-        const wx2sessionUrl = wxAuthConf.wx2sessionUrl;
+        // const wx2sessionUrl = wxAuthConf.wx2sessionUrl;
 
         try {
-            const wxAuthRawData = await axios.get(wx2sessionUrl, {
-                params: {
-                    appid: wxAuthConf.appid,
-                    secret: wxAuthConf.secret,
-                    js_code: jsCode,
-                    grant_type: 'authorization_code'
-                }
-            });
+            // const wxAuthRawData = await axios.get(wx2sessionUrl, {
+            //     params: {
+            //         appid: wxAuthConf.appid,
+            //         secret: wxAuthConf.secret,
+            //         js_code: jsCode,
+            //         grant_type: 'authorization_code'
+            //     }
+            // });
 
-            console.log('wxAuthRawData>>>', wxAuthRawData);
+            // console.log('wxAuthRawData>>>', wxAuthRawData);
 
-            const wxAuthData = wxAuthRawData.data;
+            // const wxAuthData = wxAuthRawData.data;
 
-            wxAuthData.errcode = wxAuthData.errcode || 0;
+            // wxAuthData.errcode = wxAuthData.errcode || 0;
 
-            if (wxAuthData.errcode !== 0) {
-                sendJSONresponse(res, 200, { code: -1, wxcode: wxAuthData.errcode });
-                return;
+            // if (wxAuthData.errcode !== 0) {
+            //     sendJSONresponse(res, 200, { code: -1, wxcode: wxAuthData.errcode });
+            //     return;
+            // }
+
+            // 暂时模拟
+            const wxAuthData = {
+                openid: jsCode,
+                session_key: '99999'
             }
 
             const openId = wxAuthData.openid;

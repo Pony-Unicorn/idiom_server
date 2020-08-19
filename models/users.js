@@ -11,8 +11,8 @@ class Users extends Model {
             curLevel: 1,
             curPoint: 1,
             isPass: 0,
-            strength: 5,
-            maxStrength: 5,
+            strength: 20,
+            maxStrength: 20,
             lastTimeStrength: new Date()
         }, user));
     }
